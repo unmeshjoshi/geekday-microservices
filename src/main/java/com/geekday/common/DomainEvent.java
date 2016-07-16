@@ -14,7 +14,7 @@ public class DomainEvent {
         return type;
     }
 
-    public String getJson() {
+    public String getCsv() {
         return json;
     }
 }

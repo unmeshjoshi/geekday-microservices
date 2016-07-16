@@ -21,7 +21,7 @@ public class DomainEventPublisherTest {
 
         DomainEvent receivedEvent = domainEventSubcriber.receive();
 
-        assertEquals("name, address", receivedEvent.getJson());
+        assertEquals("name, address", receivedEvent.getCsv());
 
     }
 

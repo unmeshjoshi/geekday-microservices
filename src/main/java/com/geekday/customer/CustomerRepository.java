@@ -14,7 +14,7 @@ public class CustomerRepository {
         try {
             Connection connection = getConnection();
             Statement statement = connection.createStatement();
-            statement.execute("create table customer(name varchar(50), address varchar(50))");
+            statement.execute("create table customer(name varchar(50), address varchar(50), accountId varchar(50))");
             connection.commit();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -33,7 +33,7 @@ public class CustomerRepository {
     public void save(Customer customer) {
         Connection connection = getConnection();
         try {
-            PreparedStatement ps = connection.prepareStatement("insert into customer values(?, ?)");
+            PreparedStatement ps = connection.prepareStatement("insert into customer (name, address) values(?, ?)");
             ps.setString(1, customer.getName());
             ps.setString(2, customer.getAddress());
             ps.executeUpdate();
@@ -50,7 +50,23 @@ public class CustomerRepository {
             ps.setString(1, name);
             ResultSet resultSet = ps.executeQuery();
             resultSet.next();
-            return new Customer(resultSet.getString("name"), resultSet.getString("address"));
+            return new Customer(resultSet.getString("name"), resultSet.getString("address"), resultSet.getString("accountId"));
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public void update(Customer customer) {
+        Connection connection = getConnection();
+        try {
+            PreparedStatement ps = connection.prepareStatement("update customer set accountId = ? where name=?");
+            ps.setString(1, customer.getAccountId());
+            ps.setString(2, customer.getName());
+            ps.executeUpdate();
+
+            System.out.println("Updated customer " + customer.getName() + " with accountId " + customer.getAccountId());
 
         } catch (Exception e) {
             throw new RuntimeException(e);

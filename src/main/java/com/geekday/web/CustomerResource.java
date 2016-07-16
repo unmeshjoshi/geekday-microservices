@@ -1,13 +1,15 @@
 package com.geekday.web;
 
 
+import com.geekday.customer.Customer;
+import com.geekday.customer.CustomerRepository;
 import com.geekday.customer.CustomerService;
-import com.geekday.customer.Profile;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -19,14 +21,13 @@ public class CustomerResource {
     @Path("customer")
     public Response createCustomer(@FormParam("name") String name, @FormParam("address") String address) {
         new CustomerService().newCustomer(name, address);
-        return Response.created(URI.create("/profile")).build();
+        return Response.created(URI.create("/profile/" + name)).build();
     }
 
     @GET
-    @Path("profile")
+    @Path("profile/{customerName}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Profile profile() {
-        Profile result = new Profile();
-        return result;
+    public Customer profile(@PathParam("customerName")String customerName) {
+        return new CustomerRepository().get(customerName);
     }
 }

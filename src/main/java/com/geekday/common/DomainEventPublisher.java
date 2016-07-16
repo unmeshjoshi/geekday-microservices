@@ -6,6 +6,6 @@ public class DomainEventPublisher {
     private Producer producer = Producer.getInstance();
 
     public void publish(DomainEvent event) {
-        producer.publish(event.getType(), event.getJson());
+        producer.publish(event.getType(), event.getCsv());
     }
 }

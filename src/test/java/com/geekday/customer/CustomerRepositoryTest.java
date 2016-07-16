@@ -10,7 +10,7 @@ public class CustomerRepositoryTest {
     public void shouldSaveCustomer() throws Exception {
         CustomerRepository.initialize();
         CustomerRepository repository = new CustomerRepository();
-        repository.save(new Customer("name", "address"));
+        repository.save(new Customer("name", "address", ""));
         Customer c = repository.get("name");
         assertEquals("name", c.getName());
         assertEquals("address", c.getAddress());
