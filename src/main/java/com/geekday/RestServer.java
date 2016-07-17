@@ -1,11 +1,12 @@
 package com.geekday;
 
-import com.geekday.account.AccountRepository;
-import com.geekday.account.CustomerSubscriber;
-import com.geekday.customer.AccountSubscriber;
-import com.geekday.customer.CustomerRepository;
-import com.geekday.web.AccountResource;
-import com.geekday.web.CustomerResource;
+import com.geekday.accounting.account.AccountRepository;
+import com.geekday.accounting.account.CustomerSubscriber;
+import com.geekday.common.DomainEventPublisher;
+import com.geekday.accounting.customer.AccountSubscriber;
+import com.geekday.accounting.customer.CustomerRepository;
+import com.geekday.accounting.web.AccountResource;
+import com.geekday.accounting.web.CustomerResource;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -21,6 +22,8 @@ public class RestServer {
     private static void initializeApplication() {
         CustomerRepository.initialize();
         AccountRepository.initialize();
+
+        DomainEventPublisher.initialize();
         new CustomerSubscriber().waitForCustomerRegistrations();
         new AccountSubscriber().waitForAccountRegistrations();
     }

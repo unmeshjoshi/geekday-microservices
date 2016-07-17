@@ -1,4 +1,4 @@
-package com.geekday.account;
+package com.geekday.accounting.account;
 
 import com.geekday.common.DomainEvent;
 import com.geekday.common.DomainEventSubcriber;

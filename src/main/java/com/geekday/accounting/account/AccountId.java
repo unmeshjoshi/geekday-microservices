@@ -1,4 +1,4 @@
-package com.geekday.account;
+package com.geekday.accounting.account;
 
 
 public class AccountId {

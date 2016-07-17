@@ -17,4 +17,12 @@ public class DomainEvent {
     public String getCsv() {
         return json;
     }
+
+    @Override
+    public String toString() {
+        return "DomainEvent{" +
+                "type='" + type + '\'' +
+                ", json='" + json + '\'' +
+                '}';
+    }
 }
