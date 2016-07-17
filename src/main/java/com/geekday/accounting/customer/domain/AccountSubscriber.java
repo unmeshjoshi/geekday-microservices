@@ -1,4 +1,4 @@
-package com.geekday.accounting.customer;
+package com.geekday.accounting.customer.domain;
 
 import com.geekday.common.DomainEvent;
 import com.geekday.common.DomainEventSubcriber;
@@ -8,7 +8,7 @@ import com.geekday.common.DomainEventSubcriber;
  */
 public class AccountSubscriber {
 
-    public void waitForAccountRegistrations() {
+    public void start() {
         new Thread(()-> {
             while(true) {
                 try {

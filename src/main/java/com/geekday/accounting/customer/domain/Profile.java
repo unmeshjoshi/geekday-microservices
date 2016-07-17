@@ -1,4 +1,4 @@
-package com.geekday.accounting.customer;
+package com.geekday.accounting.customer.domain;
 
 public class Profile {
     String name = "test";

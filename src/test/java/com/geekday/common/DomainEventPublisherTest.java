@@ -9,8 +9,7 @@ public class DomainEventPublisherTest {
     @Test
     public void shouldPublishEvents() throws InterruptedException {
         //create this before creating sub socket
-        DomainEventPublisher.initialize(); //FIXME: awkward
-        DomainEventPublisher domainEventPublisher = new DomainEventPublisher();
+        DomainEventPublisher domainEventPublisher = DomainEventPublisher.getInstance();
         DomainEventSubcriber domainEventSubcriber = new DomainEventSubcriber("CustomerCreated");
 
         Thread.sleep(2000);//

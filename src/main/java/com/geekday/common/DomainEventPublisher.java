@@ -2,13 +2,17 @@ package com.geekday.common;
 
 import com.geekday.messaging.Producer;
 
-public class DomainEventPublisher {
-    private static Producer producer;
-    public static void initialize() { //needed to explicitly initialize zeromq publisher
-        producer = Producer.getInstance();
+public class DomainEventPublisher { //we need only one publisher.
+    private static DomainEventPublisher instance = new DomainEventPublisher();
+
+    private Producer producer = Producer.getInstance();
+
+    public static DomainEventPublisher getInstance() {
+        return instance;
     }
 
     public void publish(DomainEvent event) {
+
         producer.publish(event.getType(), event.getCsv());
     }
 }

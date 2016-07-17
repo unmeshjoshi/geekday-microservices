@@ -1,4 +1,4 @@
-package com.geekday.accounting.account;
+package com.geekday.accounting.account.domain;
 
 import com.geekday.common.DomainEvent;
 import com.geekday.common.DomainEventPublisher;

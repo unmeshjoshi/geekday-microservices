@@ -1,4 +1,4 @@
-package com.geekday.accounting.account;
+package com.geekday.accounting.account.domain;
 
 
 import java.sql.Connection;

@@ -1,9 +1,9 @@
-package com.geekday.accounting.web;
+package com.geekday.accounting.customer.web;
 
 
-import com.geekday.accounting.customer.Customer;
-import com.geekday.accounting.customer.CustomerRepository;
-import com.geekday.accounting.customer.CustomerService;
+import com.geekday.accounting.customer.domain.Customer;
+import com.geekday.accounting.customer.domain.CustomerRepository;
+import com.geekday.accounting.customer.domain.CustomerService;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;

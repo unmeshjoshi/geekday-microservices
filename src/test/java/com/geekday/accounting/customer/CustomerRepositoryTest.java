@@ -1,5 +1,7 @@
 package com.geekday.accounting.customer;
 
+import com.geekday.accounting.customer.domain.Customer;
+import com.geekday.accounting.customer.domain.CustomerRepository;
 import com.geekday.common.DomainEvent;
 import org.junit.BeforeClass;
 import org.junit.Test;

@@ -1,7 +1,7 @@
-package com.geekday.accounting.web;
+package com.geekday.accounting.account.web;
 
-import com.geekday.accounting.account.Account;
-import com.geekday.accounting.account.AccountRepository;
+import com.geekday.accounting.account.domain.Account;
+import com.geekday.accounting.account.domain.AccountRepository;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
