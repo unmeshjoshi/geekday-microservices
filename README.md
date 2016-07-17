@@ -1,4 +1,4 @@
-## geekday-eventsourcing
+## geekday-Microservices setup.
 This is a skeleton used by geekday to try out various scenarios to be implemeneted as microservices.
 The codebase has basic structure to try out various scenarios of microservice implementations with services communicating using events. The setup uses HsqlDb as in memory database and JeroMQ (Java implementation of ZeroMQ) for event collaboration. As an example this has a basic example of AccountService and CustomerService communicating with each other.
 I hope this setup will be helpful for people to try out different scenarios of their interest quickly.
