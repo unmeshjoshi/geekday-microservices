@@ -17,7 +17,7 @@ public class AccountService {
 
     private void publishEvent(Account account) {
         DomainEvent event = new DomainEvent("AccountCreated", account.getAccountId() + "," + account.getCustomerName());
-        new DomainEventPublisher().publish(event);
+        DomainEventPublisher.getInstance().publish(event);
     }
 
     private void saveAccount(Account account) {

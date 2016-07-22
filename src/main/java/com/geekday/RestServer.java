@@ -23,7 +23,7 @@ public class RestServer {
         CustomerRepository.initialize();
         AccountRepository.initialize();
 
-        DomainEventPublisher.getInstance();
+        DomainEventPublisher.start();
         new CustomerSubscriber().start();
         new AccountSubscriber().start();
     }
@@ -32,7 +32,7 @@ public class RestServer {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
 
-        Server jettyServer = new Server(8080);
+        Server jettyServer = new Server(8051);
         jettyServer.setHandler(context);
 
         ServletHolder jerseyServlet = context.addServlet(

@@ -13,7 +13,7 @@ public class CustomerService {
 
     private void publishEvent(Customer customer) {
         DomainEvent event = new DomainEvent("CustomerCreated", customer.getName() + "," + customer.getAddress());
-        new DomainEventPublisher().publish(event);
+        DomainEventPublisher.getInstance().publish(event);
     }
 
     private void saveCustomer(Customer customer) {
