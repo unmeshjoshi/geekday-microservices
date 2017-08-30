@@ -1,7 +1,9 @@
 apply plugin: 'java'
+apply plugin: 'scala'
 apply plugin: 'application'
 apply plugin: 'com.github.johnrengelman.shadow'
 
+def scalaVersion = '2.12'
 mainClassName = 'com.geekday.RestServer'
 version = '1.0'
 
@@ -17,6 +19,30 @@ repositories {
     mavenCentral()
 }
 dependencies {
+    compile group: 'org.scala-lang', name: 'scala-library', version: '2.12.3'
+
+    testCompile group: "org.scalatest", name: "scalatest_$scalaVersion", version: "3.0.0"
+    compile group: "org.scala-lang.modules", name: "scala-async_$scalaVersion", version: "0.9.7"
+    def akkaVersion = '2.5.4'
+    compile group: 'com.typesafe.akka', name: "akka-actor_$scalaVersion", version:akkaVersion
+    compile group: "com.typesafe.akka", name: "akka-persistence_$scalaVersion", version: akkaVersion
+    compile group: "com.typesafe.akka", name: "akka-remote_$scalaVersion", version: akkaVersion
+    compile group: "org.iq80.leveldb", name: "leveldb", version: "0.9"
+    compile group: "org.fusesource.leveldbjni", name: "leveldbjni-all", version: "1.8"
+    compile group: "com.typesafe.akka", name: "akka-persistence-query-experimental_$scalaVersion", version: "2.4.20"
+    compile group: "com.typesafe.akka", name: "akka-cluster_$scalaVersion", version: akkaVersion
+    compile group: 'com.typesafe.akka', name: "akka-cluster-metrics_$scalaVersion", version: akkaVersion
+    compile group: 'com.typesafe.akka', name: "akka-stream_$scalaVersion", version: akkaVersion
+    compile group: 'org.jmdns' , name: 'jmdns', version: '3.5.1' // ApacheV2
+    compile group: 'com.github.etaty', name:"rediscala_$scalaVersion", version: '1.8.0' // ApacheV2
+    compile group: 'org.zeromq', name: 'jeromq', version: '0.3.6'
+    compile group: 'com.typesafe.akka', name: 'akka-http_2.12', version: '10.0.1'
+    compile group: 'com.typesafe.akka', name: 'akka-http-core_2.12', version: '10.0.1'
+    compile group: 'com.typesafe.akka', name: 'akka-http-spray-json_2.12', version: '10.0.1'
+    compile group: 'org.tmatesoft.svnkit', name: 'svnkit', version: '1.8.11'
+    // https://mvnrepository.com/artifact/com.typesafe.scala-logging/scala-logging-slf4j_2.11
+    compile group: 'com.typesafe.scala-logging', name: 'scala-logging-slf4j_2.11', version: '2.1.2'
+
     compile 'org.slf4j:slf4j-api:1.7.12'
     compile 'org.eclipse.jetty:jetty-server:9.4.0.M0'
     compile 'org.eclipse.jetty:jetty-servlet:9.4.0.M0'
