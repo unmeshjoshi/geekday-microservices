@@ -20,3 +20,7 @@ snapshots
 docker/*.zip
 .gradle
 *.iml
+out
+provisioning
+Vagrantfile
+.vagrant

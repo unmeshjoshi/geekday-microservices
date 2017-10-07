@@ -8,6 +8,7 @@ public class CustomerService {
         Customer customer = new Customer(name, address, "");
 
         saveCustomer(customer);
+
         publishEvent(customer); //issue not transactional
     }
 

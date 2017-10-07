@@ -13,7 +13,7 @@ public class CustomerRepositoryTest {
 
     @BeforeClass
     public static void init() {
-        CustomerRepository.initialize();
+        new CustomerRepository().runMigrations();
     }
 
     @Test

@@ -43,7 +43,8 @@ dependencies {
     compile group: 'org.zeromq', name: 'jeromq', version: '0.3.6'
     compile group: 'com.typesafe.akka', name: 'akka-http_2.12', version: '10.0.1'
     compile group: 'com.typesafe.akka', name: 'akka-http-core_2.12', version: '10.0.1'
-    compile group: 'com.typesafe.akka', name: 'akka-http-spray-json_2.12', version: '10.0.1'
+    compile group: 'com.typesafe.play', name: 'play-json_2.12', version: '2.6.5'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.1'
     compile group: 'org.tmatesoft.svnkit', name: 'svnkit', version: '1.8.11'
     // https://mvnrepository.com/artifact/com.typesafe.scala-logging/scala-logging-slf4j_2.11
     compile group: 'com.typesafe.scala-logging', name: 'scala-logging-slf4j_2.11', version: '2.1.2'
@@ -56,6 +57,8 @@ dependencies {
     runtime 'org.glassfish.jersey.containers:jersey-container-jetty-http:2.23.1'
     runtime 'org.glassfish.jersey.media:jersey-media-moxy:2.23.1'
     compile group: 'org.hsqldb', name: 'hsqldb', version: '2.0.0'
+    compile group: 'org.hibernate', name:'hibernate-core', version: '5.2.11.Final'
+
     compile group: 'org.zeromq', name: 'jeromq', version: '0.3.5'
 
     testCompile "junit:junit:4.12"

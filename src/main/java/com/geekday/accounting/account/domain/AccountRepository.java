@@ -1,34 +1,26 @@
 package com.geekday.accounting.account.domain;
 
 
+import com.geekday.common.Repository;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.Arrays;
+import java.util.List;
 
-public class AccountRepository {
+public class AccountRepository extends Repository {
 
-    public static void initialize() {
-        try {
-            Connection connection = getConnection();
-            Statement statement = connection.createStatement();
-            statement.execute("create table account(id varchar(50), customerName varchar(50))");
-            connection.commit();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
+    protected String getDbName() {
+        return "account";
     }
 
-    private static Connection getConnection() {
-        try {
-            return DriverManager.getConnection("jdbc:hsqldb:mem:account", "sa", "");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    @Override
+    public List<String> getMigrations() {
+        return Arrays.asList("create table account(id varchar(50), customerName varchar(50))");
     }
+
 
     public void save(Account account) {
         Connection connection = getConnection();
