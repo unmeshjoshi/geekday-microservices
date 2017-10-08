@@ -1,6 +1,6 @@
 package com.moviebooking
-import java.sql.{ResultSet, Timestamp}
 
+import java.sql.{Connection, ResultSet, Timestamp}
 import java.util
 
 import com.geekday.common.Repository
@@ -53,13 +53,8 @@ class MovieBookingRepository extends Repository {
     )
   }.asJava
 
-
   def save(show: Show): Any = {
-    val connection = getConnection()
-    try {
-      connection.setAutoCommit(false);
-
-
+    update(connection ⇒
       show.showSeats.foreach(seat ⇒ {
         val ps = connection.prepareStatement(s"update show_seats set booked=?" +
           s" where id = ?")
@@ -67,25 +62,33 @@ class MovieBookingRepository extends Repository {
         ps.setInt(2, seat.id)
         ps.executeUpdate()
       })
-
-      connection.commit()
-    } catch {
-      case e:Exception ⇒ connection.rollback()
-    }
+    )
   }
 
-  def getShow(showId:Int):Show = {
+  def listShows(): List[Show] = {
+    query(connection ⇒ {
+      val ps = connection.prepareStatement(s"select * from shows")
+      val resultSet = ps.executeQuery()
+      var shows = List[Show]()
+      while(resultSet.next()) {
+        shows = shows :+ newShow(resultSet, connection)
+      }
+      shows
+    })
+  }
 
-    val connection = getConnection()
-    connection.setReadOnly(true)
+  def getShow(showId: Int): Show = {
+    query(connection ⇒ {
+      val ps = connection.prepareStatement(s"select * from shows " +
+        s" where id = ${showId}")
+      val resultSet = ps.executeQuery()
+      resultSet.next()
+      newShow(resultSet, connection)
+    })
+  }
 
-    val ps = connection.prepareStatement(s"select * from shows " +
-      s" where id = ${showId}")
 
-    val resultSet = ps.executeQuery()
-
-    resultSet.next()
-
+  def newShow(resultSet: ResultSet, connection: Connection) = {
     val id = resultSet.getInt("Id")
     val cinemaId = resultSet.getInt("cinema_id")
     val screenId = resultSet.getInt("screen_id")
@@ -94,24 +97,18 @@ class MovieBookingRepository extends Repository {
     val name = resultSet.getString("name")
 
     val ps1 = connection.prepareStatement(s"select * from show_seats " +
-      s" where show_id = ${showId}")
+      s" where show_id = ${id}")
 
     val resultSet1 = ps1.executeQuery()
-    resultSet1.next()
     var availableSeats = List[Seat]()
-    availableSeats = availableSeats :+ newSeat(resultSet1)
     while (resultSet1.next()) {
       availableSeats = availableSeats :+ newSeat(resultSet1)
     }
-
-    connection.close()
-
     new Show(id, movieId, cinemaId, screenId, startTime.toString, availableSeats)
   }
 
   def getAvailableSeats(showId: String): List[Seat] = {
-    val connection = getConnection()
-    try {
+    query(connection ⇒ {
       val ps = connection.prepareStatement(s"select * from show_seats " +
         s" where show_id = ${showId} and booked=false")
       val resultSet = ps.executeQuery
@@ -122,10 +119,7 @@ class MovieBookingRepository extends Repository {
       }
 
       availableSeats
-
-    } catch {
-      case e: Exception ⇒ throw new RuntimeException(e)
-    }
+    })
   }
 
   private def newSeat(resultSet: ResultSet) = {
@@ -134,5 +128,20 @@ class MovieBookingRepository extends Repository {
       resultSet.getString("row"),
       resultSet.getString("number"),
       resultSet.getBoolean("booked"))
+  }
+
+
+
+  def update[T](callback: Connection ⇒ T): Unit = {
+    val connection = getConnection
+    connection.setAutoCommit(false)
+    callback(connection)
+    connection.commit()
+  }
+
+  def query[T](callback: Connection ⇒ T): T = {
+    val connection = getConnection
+    connection.setReadOnly(true)
+    callback(connection)
   }
 }

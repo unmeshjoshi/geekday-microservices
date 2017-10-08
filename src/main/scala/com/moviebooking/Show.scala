@@ -1,8 +1,6 @@
 package com.moviebooking
 
-import javax.persistence.{Entity, Table}
-
-class Show(val showId:Int, val movieId: Int, val cinemaId: Int, val screenId: Int, val startTime:String, val showSeats: List[Seat]) {
+case class Show(val showId:Int, val movieId: Int, val cinemaId: Int, val screenId: Int, val startTime:String, val showSeats: List[Seat]) {
   def reserveSeats(requestedSeats: List[SeatNumber]): Unit = {
     val filteredSeats = showSeats.filter(seat ⇒ {
         requestedSeats.contains(SeatNumber(seat.rowNumber, seat.number))
