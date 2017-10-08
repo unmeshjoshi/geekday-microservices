@@ -3,7 +3,8 @@ package com.moviebooking
 class MovieBookingService {
 
   def bookSeats(showId:Int, seats:List[Seat]): Unit = {
-        new MovieBookingRepository().getShow(showId)
+        val show = new MovieBookingRepository().getShow(showId)
+        show.reserveSeats(List())
 
   }
 

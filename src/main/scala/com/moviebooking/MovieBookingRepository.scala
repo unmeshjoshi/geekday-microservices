@@ -1,6 +1,6 @@
 package com.moviebooking
-
 import java.sql.{ResultSet, Timestamp}
+
 import java.util
 
 import com.geekday.common.Repository
@@ -53,6 +53,27 @@ class MovieBookingRepository extends Repository {
     )
   }.asJava
 
+
+  def save(show: Show): Any = {
+    val connection = getConnection()
+    try {
+      connection.setAutoCommit(false);
+
+
+      show.showSeats.foreach(seat ⇒ {
+        val ps = connection.prepareStatement(s"update show_seats set booked=?" +
+          s" where id = ?")
+        ps.setBoolean(1, seat.booked)
+        ps.setInt(2, seat.id)
+        ps.executeUpdate()
+      })
+
+      connection.commit()
+    } catch {
+      case e:Exception ⇒ connection.rollback()
+    }
+  }
+
   def getShow(showId:Int):Show = {
 
     val connection = getConnection()
@@ -78,9 +99,11 @@ class MovieBookingRepository extends Repository {
     val resultSet1 = ps1.executeQuery()
     resultSet1.next()
     var availableSeats = List[Seat]()
+    availableSeats = availableSeats :+ newSeat(resultSet1)
     while (resultSet1.next()) {
       availableSeats = availableSeats :+ newSeat(resultSet1)
     }
+
     connection.close()
 
     new Show(id, movieId, cinemaId, screenId, startTime.toString, availableSeats)
