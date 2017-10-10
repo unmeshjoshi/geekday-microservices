@@ -15,7 +15,7 @@ class MovieBookingRepositoryTest extends FunSuite with BeforeAndAfterAll {
   }
 
   test("should get show with all seats") {
-    val show = repository.getShow(1)
+    val show = repository.getShow("1")
     assert(show != null)
   }
 
@@ -24,17 +24,20 @@ class MovieBookingRepositoryTest extends FunSuite with BeforeAndAfterAll {
   }
 
   test("should be able to book seats for a show") {
-    val availableSeats = repository.getAvailableSeats("1")
-    assert(4 == availableSeats.length)
+    val showId = "1"
+    val availableSeats = repository.getAvailableSeats(showId)
+    assert(450 == availableSeats.length)
 
-    val show = repository.getShow(1)
+    val show = repository.getShow(showId)
     assert(show != null)
 
     show.reserveSeats(List(SeatNumber("A", "1"), SeatNumber("A", "2"), SeatNumber("B", "2")))
+    show.reserveSeats(List(SeatNumber("A", "5"), SeatNumber("A", "7"), SeatNumber("B", "10")))
     repository.save(show)
 
-    val seats = repository.getAvailableSeats("1")
+    val seats = repository.getAvailableSeats(showId)
     assert(1 == seats.length)
   }
 
 }
+

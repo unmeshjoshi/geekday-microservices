@@ -9,4 +9,12 @@ object TestMain extends App {
   val json = Json.toJson(movie)
   val end = System.currentTimeMillis()
   println(s"time=${(end - start)} ms")
+
+
+  private val jsonValue: JsValue = Json.toJson(List(SeatNumber("A", "1"), SeatNumber("B", "2")))
+  println(jsonValue)
+
+  private val jsvalue: JsValue = Json.parse("[{\"row\":\"A\",\"number\":\"1\"},{\"row\":\"B\",\"number\":\"2\"}]")
+  println(jsvalue.as[List[SeatNumber]]
+  )
 }

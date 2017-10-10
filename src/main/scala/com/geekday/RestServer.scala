@@ -7,7 +7,7 @@ import com.geekday.accounting.account.web.AccountResource
 import com.geekday.accounting.customer.domain.{AccountSubscriber, CustomerRepository}
 import com.geekday.accounting.customer.web.CustomerResource
 import com.geekday.common.DomainEventPublisher
-import com.moviebooking.MovieBookingRepository
+import com.moviebooking.{MovieBookingRepository, MovieBookingResource}
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.ServletContextHandler
 import org.glassfish.jersey.servlet.ServletContainer
@@ -40,7 +40,7 @@ object RestServer {
     jettyServer.setHandler(context)
     val jerseyServlet = context.addServlet(classOf[ServletContainer], "/*")
     jerseyServlet.setInitOrder(0)
-    jerseyServlet.setInitParameter("jersey.config.server.provider.classnames", classOf[CustomerResource].getCanonicalName + "," + classOf[AccountResource].getCanonicalName)
+    jerseyServlet.setInitParameter("jersey.config.server.provider.classnames", classOf[CustomerResource].getCanonicalName + "," + classOf[AccountResource].getCanonicalName + "," + classOf[MovieBookingResource].getCanonicalName)
     try {
       System.out.println("jerseyServlet = " + jerseyServlet)
       jettyServer.start()

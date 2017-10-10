@@ -3,15 +3,17 @@ package com.moviebooking
 import java.sql.{Connection, ResultSet, Timestamp}
 import java.util
 
+import akka.stream.scaladsl.Source
 import com.geekday.common.Repository
 
 import scala.collection.JavaConverters._
+import scala.collection.immutable
 
 class MovieBookingRepository extends Repository {
   protected def getDbName = "moviebooking"
 
   override def getMigrations: util.List[String] = {
-    List(
+    val migrations = List(
       "create table cinemas(id INT PRIMARY KEY, name varchar(50))",
       "create table screens(id INT PRIMARY KEY, cinema_id INT, name varchar(50))",
 
@@ -34,23 +36,17 @@ class MovieBookingRepository extends Repository {
       "insert into movies(id, name, movie_cast, summary) values (1, 'kabali', 'rajanikant', 'action movie')",
 
       "insert into shows(id, cinema_id, screen_id, movie_id, start_time, name) values(1, 1, 1, 1, TIMESTAMP '2017-02-02 13:00:00', 'matiny')",
-
-      "insert into show_seats(id, show_id, row, number, booked) values (1, 1,  'A', '1', false)",
-      "insert into show_seats(id, show_id, row, number, booked) values (2, 1,  'A', '2', false)",
-      "insert into show_seats(id, show_id, row, number, booked) values (3, 1,  'B', '1', false)",
-      "insert into show_seats(id, show_id, row, number, booked) values (4, 1,  'B', '2', false)",
-
-      "insert into show_seats(id, show_id, row, number, booked) values (5, 2,  'A', '1', false)",
-      "insert into show_seats(id, show_id, row, number, booked) values (6, 2,  'A', '2', false)",
-      "insert into show_seats(id, show_id, row, number, booked) values (7, 2,  'B', '1', false)",
-      "insert into show_seats(id, show_id, row, number, booked) values (8, 2,  'B', '2', false)",
-
-      "insert into show_seats(id, show_id, row, number, booked) values (9, 5,  'A',  '1', false)",
-      "insert into show_seats(id, show_id, row, number, booked) values (10, 5,  'A', '2', false)",
-      "insert into show_seats(id, show_id, row, number, booked) values (11, 5,  'B', '1', false)",
-      "insert into show_seats(id, show_id, row, number, booked) values (12, 5,  'B', '2', false)",
-
     )
+
+    val seatNumbers = (1 to 25)
+    val rows = ('A' to 'R')
+    val showId = 1
+    val tuples: immutable.Seq[(Int, Char, Int, Boolean)] = rows.flatMap(row => seatNumbers.map(n => {
+      (showId, row, n, false)
+    }))
+    val zipWithIndex: immutable.Seq[((Int, Char, Int, Boolean), Int)] = tuples.zipWithIndex
+    val testData = zipWithIndex.map(tuple ⇒ s"""insert into show_seats(id, show_id, row, number, booked) values (${tuple._2 + 1} , ${tuple._1._1}, '${tuple._1._2}', '${tuple._1._3}', ${tuple._1._4})""")
+    migrations ++ testData
   }.asJava
 
   def save(show: Show): Any = {
@@ -77,7 +73,7 @@ class MovieBookingRepository extends Repository {
     })
   }
 
-  def getShow(showId: Int): Show = {
+  def getShow(showId: String): Show = {
     query(connection ⇒ {
       val ps = connection.prepareStatement(s"select * from shows " +
         s" where id = ${showId}")
