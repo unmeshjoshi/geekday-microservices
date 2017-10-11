@@ -3,13 +3,25 @@ package com.moviebooking
 import java.sql.{Connection, ResultSet, Timestamp}
 import java.util
 
-import akka.stream.scaladsl.Source
 import com.geekday.common.Repository
 
 import scala.collection.JavaConverters._
 import scala.collection.immutable
 
-class MovieBookingRepository extends Repository {
+abstract class MovieBookingRepository extends Repository {
+  def connection:Connection
+  def beginTransaction(): Unit = {
+    connection.setAutoCommit(false)
+  }
+
+  def commit() = {
+    connection.commit()
+  }
+
+  def rollback() = {
+    connection.rollback()
+  }
+
   protected def getDbName = "moviebooking"
 
   override def getMigrations: util.List[String] = {
@@ -21,8 +33,15 @@ class MovieBookingRepository extends Repository {
       "create table buyers(id INT PRIMARY KEY, cinema_id INT, screen_id varchar(50))",
 
       "create table shows(id INT PRIMARY KEY, cinema_id INT, screen_id INT, movie_id INT, start_time TIMESTAMP, name varchar(20))",
-      "create table show_seats(id INT PRIMARY KEY, show_id INT, row varchar(10), number varchar(10), booked Boolean)",
+      "create table show_seats(id INT PRIMARY KEY, show_id INT, row varchar(10), number varchar(10), booked Boolean)"
+    )
 
+    migrations ++ seedData
+
+  }.asJava
+
+  private def seedData = {
+    val seed = List(
       //test data
       "insert into cinemas(id, name) values(1, \'city pride\')",
       "insert into cinemas(id, name) values(2, \'e-square\')",
@@ -37,7 +56,6 @@ class MovieBookingRepository extends Repository {
 
       "insert into shows(id, cinema_id, screen_id, movie_id, start_time, name) values(1, 1, 1, 1, TIMESTAMP '2017-02-02 13:00:00', 'matiny')",
     )
-
     val seatNumbers = (1 to 25)
     val rows = ('A' to 'R')
     val showId = 1
@@ -45,24 +63,36 @@ class MovieBookingRepository extends Repository {
       (showId, row, n, false)
     }))
     val zipWithIndex: immutable.Seq[((Int, Char, Int, Boolean), Int)] = tuples.zipWithIndex
-    val testData = zipWithIndex.map(tuple ⇒ s"""insert into show_seats(id, show_id, row, number, booked) values (${tuple._2 + 1} , ${tuple._1._1}, '${tuple._1._2}', '${tuple._1._3}', ${tuple._1._4})""")
-    migrations ++ testData
-  }.asJava
-
-  def save(show: Show): Any = {
-    update(connection ⇒
-      show.showSeats.foreach(seat ⇒ {
-        val ps = connection.prepareStatement(s"update show_seats set booked=?" +
-          s" where id = ?")
-        ps.setBoolean(1, seat.booked)
-        ps.setInt(2, seat.id)
-        ps.executeUpdate()
-      })
-    )
+    val generatedData = zipWithIndex.map(tuple ⇒ s"""insert into show_seats(id, show_id, row, number, booked) values (${tuple._2 + 1} , ${tuple._1._1}, '${tuple._1._2}', '${tuple._1._3}', ${tuple._1._4})""")
+    seed ++ generatedData
   }
 
+  def update[T](callback: Connection ⇒ T): Unit = {
+    execute(connection ⇒ callback(connection))
+  }
+
+  def query[T](callback: Connection ⇒ T): T = {
+    execute(connection ⇒ callback(connection))
+  }
+
+  def execute[T](callback:Connection ⇒ T): T = {
+    val connection = getConnection
+    try {
+      connection.setAutoCommit(false)
+      callback(connection)
+
+    } finally{
+      connection.commit()
+    }
+  }
+}
+
+class ShowRepository extends MovieBookingRepository {
+
+  val connection = getConnection
+
   def listShows(): List[Show] = {
-    query(connection ⇒ {
+
       val ps = connection.prepareStatement(s"select * from shows")
       val resultSet = ps.executeQuery()
       var shows = List[Show]()
@@ -70,17 +100,14 @@ class MovieBookingRepository extends Repository {
         shows = shows :+ newShow(resultSet, connection)
       }
       shows
-    })
   }
 
   def getShow(showId: String): Show = {
-    query(connection ⇒ {
       val ps = connection.prepareStatement(s"select * from shows " +
         s" where id = ${showId}")
       val resultSet = ps.executeQuery()
       resultSet.next()
       newShow(resultSet, connection)
-    })
   }
 
 
@@ -104,7 +131,6 @@ class MovieBookingRepository extends Repository {
   }
 
   def getAvailableSeats(showId: String): List[Seat] = {
-    query(connection ⇒ {
       val ps = connection.prepareStatement(s"select * from show_seats " +
         s" where show_id = ${showId} and booked=false")
       val resultSet = ps.executeQuery
@@ -115,7 +141,6 @@ class MovieBookingRepository extends Repository {
       }
 
       availableSeats
-    })
   }
 
   private def newSeat(resultSet: ResultSet) = {
@@ -127,17 +152,14 @@ class MovieBookingRepository extends Repository {
   }
 
 
-
-  def update[T](callback: Connection ⇒ T): Unit = {
-    val connection = getConnection
-    connection.setAutoCommit(false)
-    callback(connection)
-    connection.commit()
+  def save(show: Show): Any = {
+      show.showSeats.foreach(seat ⇒ {
+        val ps = connection.prepareStatement(s"update show_seats set booked=?" +
+          s" where id = ?")
+        ps.setBoolean(1, seat.booked)
+        ps.setInt(2, seat.id)
+        ps.executeUpdate()
+      })
   }
 
-  def query[T](callback: Connection ⇒ T): T = {
-    val connection = getConnection
-    connection.setReadOnly(true)
-    callback(connection)
-  }
 }

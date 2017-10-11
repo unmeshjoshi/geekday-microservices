@@ -21,6 +21,7 @@ docker/*.zip
 .gradle
 *.iml
 out
+out/*.*
 provisioning
 Vagrantfile
 .vagrant

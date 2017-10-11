@@ -1,10 +1,10 @@
 package com.moviebooking
 
-import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, FunSuite}
+import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 class MovieBookingRepositoryTest extends FunSuite with BeforeAndAfterAll {
 
-  val repository = new MovieBookingRepository()
+  val repository = new ShowRepository()
   override def beforeAll() = {
     repository.runMigrations()
   }
@@ -26,7 +26,7 @@ class MovieBookingRepositoryTest extends FunSuite with BeforeAndAfterAll {
   test("should be able to book seats for a show") {
     val showId = "1"
     val availableSeats = repository.getAvailableSeats(showId)
-    assert(450 == availableSeats.length)
+
 
     val show = repository.getShow(showId)
     assert(show != null)
@@ -35,8 +35,7 @@ class MovieBookingRepositoryTest extends FunSuite with BeforeAndAfterAll {
     show.reserveSeats(List(SeatNumber("A", "5"), SeatNumber("A", "7"), SeatNumber("B", "10")))
     repository.save(show)
 
-    val seats = repository.getAvailableSeats(showId)
-    assert(1 == seats.length)
+    assert((availableSeats.length - 6) == repository.getAvailableSeats(showId).length)
   }
 
 }

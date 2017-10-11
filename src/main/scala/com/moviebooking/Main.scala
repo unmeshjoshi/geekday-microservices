@@ -5,7 +5,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler
 import org.glassfish.jersey.servlet.ServletContainer
 
 object Main extends App {
-  new MovieBookingRepository().runMigrations()
+  new ShowRepository().runMigrations()
   startWebServer()
 
   private def startWebServer() = {

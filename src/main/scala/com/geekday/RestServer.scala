@@ -7,7 +7,7 @@ import com.geekday.accounting.account.web.AccountResource
 import com.geekday.accounting.customer.domain.{AccountSubscriber, CustomerRepository}
 import com.geekday.accounting.customer.web.CustomerResource
 import com.geekday.common.DomainEventPublisher
-import com.moviebooking.{MovieBookingRepository, MovieBookingResource}
+import com.moviebooking.{MovieBookingRepository, MovieBookingResource, ShowRepository}
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.ServletContextHandler
 import org.glassfish.jersey.servlet.ServletContainer
@@ -26,7 +26,7 @@ object RestServer {
   private def initializeApplication() = {
     new CustomerRepository().runMigrations()
     new AccountRepository().runMigrations()
-    new MovieBookingRepository().runMigrations()
+    new ShowRepository().runMigrations()
 
     DomainEventPublisher.start
     new CustomerSubscriber().start()
